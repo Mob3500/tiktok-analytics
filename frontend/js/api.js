@@ -1,7 +1,7 @@
 // API Helper Functions
 // Centralized API communication with authentication
 
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = 'https://tiktok-analytics-backend-66bz.onrender.com';
 
 /**
  * Get auth token from localStorage
