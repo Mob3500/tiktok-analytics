@@ -1,0 +1,251 @@
+/* Magic Cards CSS - Visual Effects Styles */
+
+:root {
+  --glow-color: 132, 0, 255;
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-intensity: 0;
+  --glow-radius: 200px;
+  --border-color: #e5e7eb;
+  --card-bg: #ffffff;
+}
+
+/* Enhanced Card Base */
+.magic-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.magic-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Particle Container */
+.magic-card .particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(var(--glow-color), 1);
+  box-shadow: 0 0 8px rgba(var(--glow-color), 0.6),
+              0 0 12px rgba(var(--glow-color), 0.4);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Glowing Border Effect */
+.magic-card.border-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(var(--glow-color), calc(var(--glow-intensity) * 0.8)) 0%,
+    rgba(var(--glow-color), calc(var(--glow-intensity) * 0.5)) 20%,
+    rgba(var(--glow-color), calc(var(--glow-intensity) * 0.2)) 40%,
+    transparent 60%
+  );
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.magic-card.border-glow:hover::after {
+  opacity: 1;
+}
+
+/* Global Spotlight */
+.global-spotlight {
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgba(var(--glow-color), 0.12) 0%,
+    rgba(var(--glow-color), 0.08) 15%,
+    rgba(var(--glow-color), 0.04) 30%,
+    rgba(var(--glow-color), 0.02) 50%,
+    transparent 70%
+  );
+  z-index: 9999;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  transition: opacity 0.3s ease;
+}
+
+.global-spotlight.active {
+  opacity: 1;
+}
+
+/* Click Ripple Effect */
+.click-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 100;
+  animation: ripple-expand 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes ripple-expand {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* Enhanced Card Shadows on Hover */
+.magic-card:hover {
+  box-shadow: 
+    0 10px 30px -5px rgba(var(--glow-color), 0.2),
+    0 20px 40px -10px rgba(0, 0, 0, 0.1),
+    0 0 40px -5px rgba(var(--glow-color), 0.15);
+}
+
+/* Particle Glow Enhancement */
+.particle::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: rgba(var(--glow-color), 0.2);
+  border-radius: 50%;
+  z-index: -1;
+  filter: blur(2px);
+}
+
+/* Smooth Particle Animations */
+@keyframes particle-float {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translate(20px, -20px) rotate(90deg);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-10px, 10px) rotate(180deg);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translate(15px, 25px) rotate(270deg);
+    opacity: 0.9;
+  }
+}
+
+.particle {
+  animation: particle-float 4s ease-in-out infinite;
+}
+
+/* Tilt Effect (Optional) */
+.magic-card.tilt-enabled {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Prevent text selection during animations */
+.magic-card {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Video Card Specific Enhancements */
+.magic-video-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.magic-video-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(var(--glow-color), 0.15);
+}
+
+/* Stats Card Glow */
+.magic-stat-card {
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.magic-stat-card:hover {
+  border-color: rgba(var(--glow-color), 0.3);
+  box-shadow: 0 4px 15px rgba(var(--glow-color), 0.1);
+}
+
+/* Loading State */
+.magic-card.loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.magic-card.loading::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .magic-card.border-glow::after {
+    display: none; /* Disable border glow on mobile for performance */
+  }
+  
+  .particle {
+    display: none; /* Disable particles on mobile */
+  }
+  
+  .global-spotlight {
+    display: none; /* Disable spotlight on mobile */
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .magic-card,
+  .particle,
+  .click-ripple,
+  .global-spotlight {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .magic-card:hover {
+    transform: none;
+  }
+}

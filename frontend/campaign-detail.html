@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campaign Analytics - TikTok Analytics</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+    }
+  </style>
+</head>
+<body class="min-h-screen m-0 p-0 bg-white">
+  
+  <!-- Header -->
+  <header class="border-b border-gray-200 px-8 py-6">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <a href="dashboard.html" class="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-2">
+          <i class="fas fa-arrow-left"></i> Back
+        </a>
+      </div>
+      <span class="text-lg font-semibold">M2M Analytics</span>
+      <button onclick="logout()" class="text-sm text-gray-600 hover:text-gray-900">
+        <i class="fas fa-sign-out-alt mr-1"></i> Logout
+      </button>
+    </div>
+    <div id="campaign-header">
+      <h1 class="text-2xl font-bold mb-2">Loading...</h1>
+      <div class="flex gap-6 text-xs text-gray-500">
+        <span>Campaign</span>
+        <span id="campaign-date">Created...</span>
+        <span id="campaign-budget">Total Budget: USD $0.00</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="border-b border-gray-200 px-8">
+    <div class="flex gap-8 text-sm">
+      <button class="py-4 border-b-2 border-orange-500 text-gray-900 font-medium">Live Post Analytics</button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="px-8 py-8 grid grid-cols-6 gap-4" id="stats-container">
+    <!-- Loading -->
+    <div class="border border-gray-200 rounded-lg p-4 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+    <div class="border border-gray-200 rounded-lg p-4 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+    <div class="border border-gray-200 rounded-lg p-4 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+    <div class="border border-gray-200 rounded-lg p-4 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+    <div class="border border-gray-200 rounded-lg p-4 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+    <div class="border border-gray-200 rounded-lg p-4 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+  </div>
+
+  <!-- Add Video Section -->
+  <div class="px-8 pb-4">
+    <div class="border border-gray-200 rounded-lg p-6">
+      <h2 class="text-lg font-bold mb-4">
+        <i class="fas fa-plus-circle text-orange-500 mr-2"></i> Add TikTok Video
+      </h2>
+      
+      <!-- Success Message -->
+      <div id="add-video-success" class="hidden mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+        Video added successfully! Scraping in progress...
+      </div>
+      
+      <!-- Error Message -->
+      <div id="add-video-error" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"></div>
+      
+      <form id="add-video-form" class="flex gap-3">
+        <input 
+          type="url" 
+          id="tiktok-url" 
+          required
+          placeholder="https://www.tiktok.com/@username/video/1234567890"
+          class="flex-1 px-4 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+        >
+        <button 
+          type="submit" 
+          id="add-video-btn"
+          class="bg-orange-500 text-white px-6 py-2 rounded text-sm font-medium hover:bg-orange-600 transition whitespace-nowrap"
+        >
+          <span id="add-video-btn-text">
+            <i class="fas fa-plus mr-2"></i> Add Video
+          </span>
+          <i id="add-video-btn-spinner" class="fas fa-spinner fa-spin hidden"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="px-8 py-4">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-gray-600">Campaign <span class="font-semibold text-gray-900">1</span></span>
+        <span class="text-sm font-semibold text-gray-900">Live Posts <span id="video-count-badge" class="text-xs bg-gray-200 px-2 py-1 rounded">0</span></span>
+      </div>
+      <div class="flex items-center gap-4">
+        <button onclick="loadVideos()" class="text-sm text-orange-500 hover:text-orange-600">
+          <i class="fas fa-sync-alt mr-1"></i> Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- Video Grid -->
+    <div id="videos-container" class="grid grid-cols-7 gap-4">
+      <!-- Loading state -->
+      <div class="text-center py-12 col-span-7">
+        <i class="fas fa-spinner fa-spin text-4xl text-gray-400"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    let currentCampaignId = null;
+    let refreshInterval = null;
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!requireAuth()) return;
+      
+      // Get campaign ID from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      currentCampaignId = parseInt(urlParams.get('id'));
+      
+      if (!currentCampaignId) {
+        alert('Invalid campaign ID');
+        window.location.href = 'dashboard.html';
+        return;
+      }
+      
+      // Load data
+      await loadCampaignInfo();
+      await loadAnalytics();
+      await loadVideos();
+      
+      // Start auto-refresh
+      startAutoRefresh();
+      
+      // Add video form handler
+      document.getElementById('add-video-form').addEventListener('submit', handleAddVideo);
+    });
+
+    // Load campaign info
+    async function loadCampaignInfo() {
+      try {
+        const campaign = await getCampaign(currentCampaignId);
+        
+        document.querySelector('#campaign-header h1').textContent = campaign.name;
+        document.getElementById('campaign-date').textContent = `Created ${formatDate(campaign.created_at)}`;
+        document.getElementById('campaign-budget').textContent = `Total Budget: USD ${formatCurrency(campaign.total_budget)}`;
+        
+      } catch (error) {
+        console.error('Failed to load campaign:', error);
+      }
+    }
+
+    // Load analytics
+    async function loadAnalytics() {
+      try {
+        const analytics = await getCampaignAnalytics(currentCampaignId);
+        
+        document.getElementById('stats-container').innerHTML = `
+          <div class="border border-gray-200 rounded-lg p-4">
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-arrow-up text-teal-500"></i>
+              <span class="text-xs text-gray-600">Total Views</span>
+            </div>
+            <div class="text-2xl font-bold">${formatNumber(analytics.total_views)}</div>
+          </div>
+          
+          <div class="border border-gray-200 rounded-lg p-4">
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-arrow-up text-gray-400"></i>
+              <span class="text-xs text-gray-600">Live Posts</span>
+            </div>
+            <div class="text-2xl font-bold">${analytics.total_videos}</div>
+          </div>
+          
+          <div class="border border-gray-200 rounded-lg p-4">
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-arrow-up text-blue-500"></i>
+              <span class="text-xs text-gray-600">Total Likes</span>
+            </div>
+            <div class="text-2xl font-bold">${formatNumber(analytics.total_likes)}</div>
+          </div>
+          
+          <div class="border border-gray-200 rounded-lg p-4">
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-arrow-up text-gray-400"></i>
+              <span class="text-xs text-gray-600">Avg. Cost Per View</span>
+            </div>
+            <div class="text-2xl font-bold">$${analytics.avg_cost_per_view.toFixed(4)}</div>
+          </div>
+          
+          <div class="border border-gray-200 rounded-lg p-4">
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-arrow-up text-purple-500"></i>
+              <span class="text-xs text-gray-600">Total Comments</span>
+            </div>
+            <div class="text-2xl font-bold">${formatNumber(analytics.total_comments)}</div>
+          </div>
+          
+          <div class="border border-gray-200 rounded-lg p-4">
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-arrow-up text-yellow-500"></i>
+              <span class="text-xs text-gray-600">Engagement Rate</span>
+            </div>
+            <div class="text-2xl font-bold">${analytics.engagement_rate}%</div>
+          </div>
+        `;
+        
+      } catch (error) {
+        console.error('Failed to load analytics:', error);
+      }
+    }
+
+    // Load videos
+    async function loadVideos() {
+      const container = document.getElementById('videos-container');
+      
+      try {
+        const videos = await getCampaignVideos(currentCampaignId);
+        
+        // Update badge
+        document.getElementById('video-count-badge').textContent = videos.length;
+        
+        if (videos.length === 0) {
+          container.innerHTML = `
+            <div class="col-span-7 text-center py-12">
+              <i class="fas fa-video text-5xl text-gray-300 mb-4"></i>
+              <p class="text-gray-600">No videos yet. Add your first TikTok video above!</p>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = videos.map(video => createVideoCard(video)).join('');
+        
+        // Reload analytics
+        await loadAnalytics();
+        
+      } catch (error) {
+        console.error('Failed to load videos:', error);
+        container.innerHTML = `
+          <div class="col-span-7 text-center py-12 text-red-600">
+            <i class="fas fa-exclamation-circle text-5xl mb-4"></i>
+            <p>Failed to load videos</p>
+          </div>
+        `;
+      }
+    }
+
+    // Create video card HTML
+    function createVideoCard(video) {
+      const metadata = video.video_metadata;
+      const statusBadge = getStatusBadge(video.scrape_status);
+      
+      // Get thumbnail from TikTok URL or use placeholder
+      const videoId = video.tiktok_id || extractVideoId(video.tiktok_url);
+      const thumbnail = metadata?.video_cover_url || `https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=400&fit=crop`;
+      
+      // Calculate time ago
+      const createdDate = new Date(video.created_at);
+      const timeAgo = getTimeAgo(createdDate);
+      
+      return `
+        <div class="rounded-lg overflow-hidden bg-gray-900 relative group cursor-pointer" onclick="window.open('${video.tiktok_url}', '_blank')">
+          <img src="${thumbnail}" alt="Video" class="w-full h-64 object-cover" onerror="this.src='https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=400&fit=crop'">
+          
+          <!-- Play button overlay -->
+          <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition flex items-center justify-center">
+            <i class="fa-solid fa-play text-white text-2xl"></i>
+          </div>
+          
+          <!-- Video info -->
+          <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3 text-white text-xs">
+            ${metadata ? `
+              <div class="flex items-center gap-1 mb-2">
+                <i class="fa-solid fa-music"></i> 
+                ${metadata.music_name || 'Unknown Track'}
+              </div>
+              <div class="text-xs opacity-75">
+                ${metadata.author_nickname || metadata.author_name || 'Unknown Creator'}
+              </div>
+              <div class="mt-2 flex items-center gap-3 text-xs">
+                <span><i class="fa-solid fa-eye"></i> ${formatNumber(metadata.play_count)}</span>
+                <span><i class="fa-solid fa-heart"></i> ${formatNumber(metadata.digg_count)}</span>
+                <span><i class="fa-solid fa-comment"></i> ${formatNumber(metadata.comment_count)}</span>
+              </div>
+            ` : `
+              <div class="flex items-center gap-1">
+                ${statusBadge}
+              </div>
+            `}
+          </div>
+          
+          <!-- Time badge -->
+          <div class="absolute top-2 right-2 bg-gray-800 bg-opacity-75 px-2 py-1 rounded text-xs text-white">
+            ${timeAgo}
+          </div>
+          
+          <!-- Delete button -->
+          <button 
+            onclick="event.stopPropagation(); deleteVideoConfirm(${video.id})" 
+            class="absolute top-2 left-2 bg-red-500 bg-opacity-75 hover:bg-opacity-100 w-8 h-8 rounded flex items-center justify-center text-white transition opacity-0 group-hover:opacity-100"
+          >
+            <i class="fas fa-trash text-sm"></i>
+          </button>
+        </div>
+      `;
+    }
+
+    // Extract video ID from URL
+    function extractVideoId(url) {
+      const match = url.match(/video\/(\d+)/);
+      return match ? match[1] : null;
+    }
+
+    // Get status badge HTML
+    function getStatusBadge(status) {
+      const colors = {
+        'pending': 'bg-yellow-500',
+        'completed': 'bg-green-500',
+        'failed': 'bg-red-500'
+      };
+      return `<span class="px-2 py-1 rounded text-xs ${colors[status] || 'bg-gray-500'}">${status}</span>`;
+    }
+
+    // Get time ago string
+    function getTimeAgo(date) {
+      const seconds = Math.floor((new Date() - date) / 1000);
+      const intervals = {
+        year: 31536000,
+        month: 2592000,
+        week: 604800,
+        day: 86400,
+        hour: 3600,
+        minute: 60
+      };
+      
+      for (const [name, value] of Object.entries(intervals)) {
+        const interval = Math.floor(seconds / value);
+        if (interval >= 1) {
+          return `${interval} ${name}${interval > 1 ? 's' : ''} ago`;
+        }
+      }
+      return 'just now';
+    }
+
+    // Handle add video form
+    async function handleAddVideo(e) {
+      e.preventDefault();
+      
+      const urlInput = document.getElementById('tiktok-url');
+      const tiktokUrl = urlInput.value.trim();
+      
+      document.getElementById('add-video-error').classList.add('hidden');
+      document.getElementById('add-video-success').classList.add('hidden');
+      
+      const btn = document.getElementById('add-video-btn');
+      const btnText = document.getElementById('add-video-btn-text');
+      const btnSpinner = document.getElementById('add-video-btn-spinner');
+      
+      btn.disabled = true;
+      btnText.classList.add('hidden');
+      btnSpinner.classList.remove('hidden');
+      
+      try {
+        await addVideoToCampaign(currentCampaignId, tiktokUrl);
+        
+        document.getElementById('add-video-success').classList.remove('hidden');
+        urlInput.value = '';
+        
+        setTimeout(() => loadVideos(), 500);
+        
+      } catch (error) {
+        const errorDiv = document.getElementById('add-video-error');
+        errorDiv.textContent = error.message || 'Failed to add video';
+        errorDiv.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btnText.classList.remove('hidden');
+        btnSpinner.classList.add('hidden');
+      }
+    }
+
+    // Delete video
+    async function deleteVideoConfirm(videoId) {
+      if (confirm('Are you sure you want to delete this video?')) {
+        try {
+          await deleteVideo(videoId);
+          await loadVideos();
+        } catch (error) {
+          alert('Failed to delete video: ' + error.message);
+        }
+      }
+    }
+
+    // Auto-refresh for pending videos
+    function startAutoRefresh() {
+      refreshInterval = setInterval(async () => {
+        try {
+          const videos = await getCampaignVideos(currentCampaignId);
+          const hasPending = videos.some(v => v.scrape_status === 'pending');
+          
+          if (hasPending) {
+            await loadVideos();
+          }
+        } catch (error) {
+          console.error('Auto-refresh error:', error);
+        }
+      }, 10000);
+    }
+
+    // Cleanup
+    window.addEventListener('beforeunload', () => {
+      if (refreshInterval) clearInterval(refreshInterval);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+venv/
+env/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Mac
+.DS_Store
+
+# Logs
+*.log
+
+# Node modules (if any)
+node_modules/
+
+# Large files
+*.mp4
+*.mov
+*.avi
+# Environment files
+.env
+env
+backend/.env
+backend/env
+*.env

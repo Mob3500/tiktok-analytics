@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - TikTok Analytics</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+    }
+  </style>
+</head>
+<body class="min-h-screen m-0 p-0 bg-white">
+  
+  <!-- Header -->
+  <header class="border-b border-gray-200 px-8 py-6">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-black rounded flex items-center justify-center text-white text-xs font-bold">TT</div>
+        <span class="text-sm font-semibold">DASHBOARD</span>
+      </div>
+      <span class="text-lg font-semibold">M2M Analytics</span>
+      <button onclick="logout()" class="text-sm text-gray-600 hover:text-gray-900">
+        <i class="fas fa-sign-out-alt mr-1"></i> Logout
+      </button>
+    </div>
+    <h1 class="text-2xl font-bold mb-2">Your Campaigns</h1>
+    <div class="flex gap-6 text-xs text-gray-500">
+      <span id="user-email">Loading...</span>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="border-b border-gray-200 px-8">
+    <div class="flex gap-8 text-sm">
+      <button class="py-4 border-b-2 border-orange-500 text-gray-900 font-medium">All Campaigns</button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="px-8 py-8 grid grid-cols-6 gap-4" id="stats-cards">
+    <div class="border border-gray-200 rounded-lg p-4 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+    <div class="border border-gray-200 rounded-lg p-4 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+    <div class="border border-gray-200 rounded-lg p-4 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+    <div class="border border-gray-200 rounded-lg p-4 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+    <div class="border border-gray-200 rounded-lg p-4 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+    <div class="border border-gray-200 rounded-lg p-4 animate-pulse">
+      <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+      <div class="h-8 bg-gray-200 rounded w-16"></div>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="px-8 py-4">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <span class="text-sm font-semibold text-gray-900">Campaigns <span id="campaign-count" class="text-xs bg-gray-200 px-2 py-1 rounded">0</span></span>
+      </div>
+      <button 
+        onclick="showCreateCampaignModal()" 
+        class="bg-orange-500 text-white px-6 py-2 rounded text-sm font-medium hover:bg-orange-600 transition"
+      >
+        <i class="fas fa-plus mr-2"></i> New Campaign
+      </button>
+    </div>
+
+    <!-- Campaigns Grid -->
+    <div id="campaigns-container" class="grid grid-cols-4 gap-4">
+      <!-- Loading state -->
+      <div class="border border-gray-200 rounded-lg p-6 animate-pulse">
+        <div class="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
+        <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
+        <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Campaign Modal -->
+  <div id="create-campaign-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-gray-900">Create New Campaign</h3>
+        <button onclick="hideCreateCampaignModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div id="modal-error" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"></div>
+      
+      <form id="create-campaign-form">
+        <div class="mb-4">
+          <label for="campaign-name" class="block text-sm font-medium text-gray-700 mb-2">Campaign Name *</label>
+          <input 
+            type="text" 
+            id="campaign-name" 
+            required
+            class="block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+            placeholder="e.g., Summer Music Launch"
+          >
+        </div>
+        
+        <div class="mb-4">
+          <label for="campaign-description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+          <textarea 
+            id="campaign-description" 
+            rows="3"
+            class="block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+            placeholder="Campaign goals and details..."
+          ></textarea>
+        </div>
+        
+        <div class="mb-6">
+          <label for="campaign-budget" class="block text-sm font-medium text-gray-700 mb-2">Total Budget ($)</label>
+          <input 
+            type="number" 
+            id="campaign-budget" 
+            step="0.01"
+            min="0"
+            class="block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+            placeholder="0.00"
+          >
+        </div>
+        
+        <div class="flex justify-end space-x-3">
+          <button 
+            type="button" 
+            onclick="hideCreateCampaignModal()" 
+            class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            id="create-campaign-btn"
+            class="px-4 py-2 bg-orange-500 text-white rounded font-medium hover:bg-orange-600 transition"
+          >
+            <span id="create-campaign-btn-text">Create Campaign</span>
+            <i id="create-campaign-btn-spinner" class="fas fa-spinner fa-spin ml-2 hidden"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/campaigns.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!requireAuth()) return;
+      initDashboard();
+    });
+  </script>
+</body>
+</html>
